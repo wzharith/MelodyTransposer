@@ -1,0 +1,55 @@
+/* Main styling */
+.stApp {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header styling */
+.main .block-container h1 {
+    color: #2C3E50;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* File uploader styling */
+.uploadedFile {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+/* Spinner styling */
+.stSpinner > div {
+    border-color: #FFB84C !important;
+}
+
+/* Tips section styling */
+.markdown-text-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+/* Select box styling */
+.stSelectbox {
+    margin: 20px 0;
+}
+
+/* Error message styling */
+.stAlert {
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+/* Score display styling */
+img {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
