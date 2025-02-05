@@ -2,7 +2,7 @@
 name = "repl-nix-workspace"
 version = "0.1.0"
 description = "Add your description here"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "librosa>=0.10.2.post1",
     "music21>=9.3.0",
@@ -10,6 +10,6 @@ dependencies = [
     "psycopg2-binary>=2.9.10",
     "sqlalchemy>=2.0.37",
     "streamlit>=1.42.0",
-    "trafilatura>=2.0.0",
+    "trafilatura>=2.0.0,<3.0.0",
     "twilio>=9.4.4",
 ]
