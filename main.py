@@ -14,6 +14,13 @@ from sqlalchemy.orm import Session
 import pickle
 import io
 import logging
+import os
+from music21 import environment
+
+# Configure music21 to use basic formats
+us = environment.UserSettings()
+us['warnings'] = 0
+us['directoryScratch'] = '/tmp'
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -176,22 +183,24 @@ if audio_file is not None:
                 # Display scores
                 st.subheader("Original Score")
                 try:
-                    score_image = score.show()
-                    if score_image:
-                        st.image(score_image, use_column_width=True)
-                    else:
-                        st.error("Failed to generate score image")
+                    score_path = os.path.join('/tmp', 'original_score.xml')
+                    score.write('musicxml', fp=score_path)
+                    with open(score_path, 'r') as f:
+                        score_data = f.read()
+                    st.code(score_data, language='xml')
+                    os.remove(score_path)
                 except Exception as e:
                     st.error(f"Error displaying original score: {str(e)}")
                     logging.error(f"Score display error: {str(e)}")
 
                 st.subheader("Transposed Score")
                 try:
-                    transposed_image = transposed_score.show()
-                    if transposed_image:
-                        st.image(transposed_image, use_column_width=True)
-                    else:
-                        st.error("Failed to generate transposed score image")
+                    transposed_path = os.path.join('/tmp', 'transposed_score.xml')
+                    transposed_score.write('musicxml', fp=transposed_path)
+                    with open(transposed_path, 'r') as f:
+                        transposed_data = f.read()
+                    st.code(transposed_data, language='xml')
+                    os.remove(transposed_path)
                 except Exception as e:
                     st.error(f"Error displaying transposed score: {str(e)}")
                     logging.error(f"Transposed score display error: {str(e)}")

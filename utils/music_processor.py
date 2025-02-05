@@ -1,4 +1,11 @@
 from music21 import *
+import logging
+import os
+
+# Configure music21 to use basic formats
+us = environment.UserSettings()
+us['warnings'] = 0
+us['directoryScratch'] = '/tmp'
 
 def create_music_score(notes):
     """
