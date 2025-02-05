@@ -16,6 +16,8 @@ import io
 import logging
 import os
 from music21 import environment
+import base64
+from tempfile import NamedTemporaryFile
 
 # Configure music21 to use basic formats
 us = environment.UserSettings()
@@ -145,6 +147,37 @@ if audio_file is not None:
                     st.error("Failed to transpose the score.")
                     st.stop()
 
+                # Cache for rendered scores
+                if 'score_cache' not in st.session_state:
+                    st.session_state.score_cache = {}
+
+                def render_score(score, cache_key):
+                    """Render a music21 score to PNG and return as base64 string"""
+                    if cache_key in st.session_state.score_cache:
+                        return st.session_state.score_cache[cache_key]
+
+                    try:
+                        # Create a temporary file for the PNG
+                        with NamedTemporaryFile(suffix='.png') as tmp:
+                            # Export score to PNG
+                            score.write('musicxml.png', fp=tmp.name)
+
+                            # Read the PNG data
+                            with open(tmp.name, 'rb') as f:
+                                img_data = f.read()
+
+                            # Convert to base64
+                            img_b64 = base64.b64encode(img_data).decode()
+                            html = f'<img src="data:image/png;base64,{img_b64}" style="max-width: 100%;">'
+
+                            # Cache the result
+                            st.session_state.score_cache[cache_key] = html
+                            return html
+                    except Exception as e:
+                        st.error(f"Error rendering score: {str(e)}")
+                        return None
+
+
                 # Save button
                 if st.button("Save Transcription"):
                     try:
@@ -183,24 +216,18 @@ if audio_file is not None:
                 # Display scores
                 st.subheader("Original Score")
                 try:
-                    score_path = os.path.join('/tmp', 'original_score.xml')
-                    score.write('musicxml', fp=score_path)
-                    with open(score_path, 'r') as f:
-                        score_data = f.read()
-                    st.code(score_data, language='xml')
-                    os.remove(score_path)
+                    original_html = render_score(score, f"original_{song_title}")
+                    if original_html:
+                        st.markdown(original_html, unsafe_allow_html=True)
                 except Exception as e:
                     st.error(f"Error displaying original score: {str(e)}")
                     logging.error(f"Score display error: {str(e)}")
 
                 st.subheader("Transposed Score")
                 try:
-                    transposed_path = os.path.join('/tmp', 'transposed_score.xml')
-                    transposed_score.write('musicxml', fp=transposed_path)
-                    with open(transposed_path, 'r') as f:
-                        transposed_data = f.read()
-                    st.code(transposed_data, language='xml')
-                    os.remove(transposed_path)
+                    transposed_html = render_score(transposed_score, f"transposed_{song_title}_{target_key}")
+                    if transposed_html:
+                        st.markdown(transposed_html, unsafe_allow_html=True)
                 except Exception as e:
                     st.error(f"Error displaying transposed score: {str(e)}")
                     logging.error(f"Transposed score display error: {str(e)}")
